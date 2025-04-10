@@ -74,7 +74,8 @@ def get_all_tenchusatsu_days(user_shi, year, month):
 # Streamlit UI
 st.title("🔮 天中殺チェックアプリ")
 
-birth_date = st.date_input("あなたの生年月日を選んでください", value=datetime.date(2000, 1, 1))
+birth_date = st.date_input("あなたの生年月日を選んでください", value=datetime.date(
+    2000, 1, 1), min_value=datetime.date(1900, 1, 1), max_value=datetime.date(2100, 12, 31))
 target_year = st.number_input(
     "調べたい年（例：2025）", min_value=1900, max_value=2100, value=2025)
 target_month = st.selectbox("調べたい月", list(range(1, 13)))
