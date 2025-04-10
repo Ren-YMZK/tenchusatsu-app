@@ -1,3 +1,4 @@
+import streamlit as st
 import datetime
 
 # 干支データ
@@ -70,29 +71,31 @@ def get_all_tenchusatsu_days(user_shi, year, month):
     return days
 
 
-# 自動実行用にプリセットデータを定義（インタラクティブ入力なし）
-if __name__ == "__main__":
-    print("🔮 天中殺チェックアプリ（プリセット版）")
+# Streamlit UI
+st.title("🔮 天中殺チェックアプリ")
 
-    # プリセット値
-    birth_input = "2002-05-08"
-    target_year = 2025
-    target_month = 4
+birth_date = st.date_input("あなたの生年月日を選んでください", value=datetime.date(2000, 1, 1))
+target_year = st.number_input(
+    "調べたい年（例：2025）", min_value=1900, max_value=2100, value=2025)
+target_month = st.selectbox("調べたい月", list(range(1, 13)))
 
-    birth_year, birth_month, birth_day = map(int, birth_input.split("-"))
+if st.button("占う"):
+    birth_year, birth_month, birth_day = birth_date.year, birth_date.month, birth_date.day
     nikkanshi = get_nikkanshi_from_birthdate(
         birth_year, birth_month, birth_day)
     user_shi = nikkanshi[1]
-
     years = get_all_tenchusatsu_years(
         user_shi, target_year - 5, target_year + 10)
     months = get_all_tenchusatsu_months(user_shi)
     days = get_all_tenchusatsu_days(user_shi, target_year, target_month)
 
-    print(f"\nあなたの日干支：{nikkanshi}")
-    print(f"\n天中殺の年（{target_year - 5}〜{target_year + 10}）：{years}")
+    st.markdown(f"### あなたの日干支：**{nikkanshi}**")
+    st.markdown(f"### 天中殺の年（{target_year - 5}〜{target_year + 10}）:")
+    st.write(years)
+
     month_names = [f"{m}月（{MONTH_TO_JUNISHI[m]}）" for m in months]
-    print(f"天中殺の月（毎年共通）：{month_names}")
-    print(f"\n{target_year}年{target_month}月の天中殺日：")
-    for d in days:
-        print(f"- {d}")
+    st.markdown("### 天中殺の月（毎年共通）:")
+    st.write(month_names)
+
+    st.markdown(f"### {target_year}年{target_month}月の天中殺日:")
+    st.write(days)
